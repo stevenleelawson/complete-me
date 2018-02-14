@@ -25,13 +25,6 @@ describe('Trie', () => {
     expect(trie.children).to.deep.equal({});
   })
 
-  describe('Count',  () => {
-    it.skip('should be able to count the number of words', () => {
-      // trie.count();
-      trie.insert('pizza');
-      expect(trie.count).to.equal(1);
-    })
-  })
   describe('Insert', () => {
     it('should increment the number of words', () => {
       // trie.count();
@@ -104,6 +97,13 @@ describe('Trie', () => {
     })
   })
   describe('Delete', () => {
+    it('should remove deleted word from suggestions', () => {
+      trie.poplulate(dictionary);
 
+      expect(trie.suggest('piz')).to.deep.equal(['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle'])
+
+      trie.delete('pizzeria');
+      expect(trie.suggest('piz')).to.deep.equal(['pize', 'pizza',  'pizzicato', 'pizzle'])
+    })
   })
 })
