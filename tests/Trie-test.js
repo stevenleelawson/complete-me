@@ -1,6 +1,10 @@
 import { expect } from 'chai';
 import Node from '../lib/Node.js';
 import Trie from '../lib/Trie.js';
+import fs from 'fs';
+
+const text = "/usr/share/dict/words"
+const dictionary = fs.readFileSync(text).toString().trim().split('\n')
 
 describe('Trie', () => {
   let trie;
@@ -14,7 +18,7 @@ describe('Trie', () => {
   it('should be an instance of Trie', () => {
     expect(trie).to.be.an.instanceOf(Trie);
   })
-  it('should track the number of words', () => {
+  it.skip('should track the number of words', () => {
     expect(trie.count).to.equal(0);
   })
   it('should store child nodes', () => {
@@ -29,7 +33,7 @@ describe('Trie', () => {
     })
   })
   describe('Insert', () => {
-    it('should be able to count the number of words', () => {
+    it('should increment the number of words', () => {
       // trie.count();
       trie.insert('pizza');
       expect(trie.count).to.equal(1);
@@ -44,13 +48,9 @@ describe('Trie', () => {
     trie.insert('pizza');
     trie.insert('car');
 
-    // expect(Object.keys(trie.children)).to.deep.equal(['t', 'p', 'c']);
-    expect(trie.children['c']).to.exist;
-    expect(trie.children['c'].children['a']).to.exist;
-    expect(trie.children['c'].children['a'].children['r']).to.exist;
-    expect(trie.children['c'].children['a'].children['r'].completeWord).to.equal('car');
-    console.log(JSON.stringify(trie, null, 4))
-    })
+    expect(Object.keys(trie.children)).to.deep.equal(['t', 'p', 'c']);
+
+   })
   })
   describe('Suggest', () => {
     beforeEach( () => {
@@ -65,19 +65,43 @@ describe('Trie', () => {
       let check2 = results.some(result => result === 'pizza')
       let check3 = results.some(result => result === 'pizzas')
       let check4 = results.some(result => result === 'dog')
+      // expect(results).to.eql(['piano', 'pizza', 'pizzas'])
 
-      // expect(check1).to.be.true;
-      // expect(check2).to.be.true;
-      // expect(check3).to.be.true;
-      // expect(check4).to.be.false;
-      console.log(JSON.stringigy(trie, null, 4))
+      expect(check1).to.be.true;
+      expect(check2).to.be.true;
+      expect(check3).to.be.true;
+      expect(check4).to.be.false;
     })
   })
   describe('Populate', () => {
+    it('should insert an array of words', () => {
+      let array = ['piano', 'cat', 'dog'];
 
+      expect(trie.count).to.equal(0);
+      trie.populate(array);
+      expect(trie.count).to.equal(3);
+
+    })
+    it('should populate a dictionary of words', () => {
+      expect(trie.count).to.equal(0);
+      trie.populate(dictionary);
+      expect(trie.count).to.equal(235886);
+
+    })
   })
   describe('Select', () => {
+    it('should prioritize selected words in a small array', () => {
+      let array = ['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle'];
 
+      trie.populate(array);
+      expect(trie.suggest('piz').to.deep.equal(['pizzeria', 'pize', 'pizza', 'pizzicato', 'pizzle']))
+    })
+    it('should prioritize selected words in a small array', () => {
+      let array = ['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle'];
+
+      trie.populate(dictionary);
+      expect(trie.suggest('piz').to.deep.equal(['pizzeria', 'pize', 'pizza', 'pizzicato', 'pizzle']))
+    })
   })
   describe('Delete', () => {
 
