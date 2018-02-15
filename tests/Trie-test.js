@@ -51,6 +51,13 @@ describe('TRIE', () => {
       expect(Object.keys(trie.children)).to.deep.equal(['p','d']);
       expect(trie.wordCount).to.equal(5);
     })
+    it('should only increment once if the same word is entered twice', () =>{
+      trie.insert('taco');
+      expect(trie.wordCount).to.equal(1);
+      
+      trie.insert('taco');
+      expect(trie.wordCount).to.equal(1);
+    })
   })
 
   describe('COUNT', () => {
