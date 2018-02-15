@@ -54,7 +54,7 @@ describe('TRIE', () => {
     it('should only increment once if the same word is entered twice', () =>{
       trie.insert('taco');
       expect(trie.wordCount).to.equal(1);
-      
+
       trie.insert('taco');
       expect(trie.wordCount).to.equal(1);
     })
@@ -86,12 +86,15 @@ describe('TRIE', () => {
       let check1 = results.some(result => result === 'pizza')
       let check2 = results.some(result => result === 'pizzas')
       let check3 = results.some(result => result === 'piano')
-      let check4 = results.some(result => result === 'dog')
 
       expect(check1).to.equal(true)
       expect(check2).to.equal(true)
       expect(check3).to.equal(true)
-      expect(check4).to.equal(false)
+    })
+    it('should NOT return a suggested word that does not begin with the entered prefix', () => {
+      let results = trie.suggest('pi');
+      let check1 = results.some(result => result === 'place')
+      expect(check1).to.equal(false)
     })
   })
 
@@ -107,6 +110,10 @@ describe('TRIE', () => {
       trie.populate(dictionary);
       expect(trie.suggest('piz')).to.deep.equal(['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle'])
     })
+    it('should NOT suggest words that are NOT in the dictionary', () => {
+      trie.populate(dictionary);
+      expect(trie.suggest('ga')).to.not.deep.equal(['gazorp'])
+    })
   })
 
   describe('SELECT', () => {
@@ -119,7 +126,12 @@ describe('TRIE', () => {
       trie.suggest('piz');
       expect(trie.suggest('piz')).to.deep.equal(['pizzeria', 'pize', 'pizza', 'pizzicato', 'pizzle'])
     })
-
+    it('should increment the completeWord word property if a word is entered more than once', () => {
+      trie.insert('dog');
+      trie.select('dog');
+      trie.select('dog');
+      expect(trie.children['d'].children['o'].children['g'].completeWord).to.equal(3);
+    })
   })
 
   describe('DELETE', () => {
